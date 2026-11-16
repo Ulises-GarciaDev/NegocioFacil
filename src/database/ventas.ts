@@ -91,13 +91,14 @@ export async function registrarVenta(
       }
 
       productosVerificados.push({
-        item,
-        nombre: producto.nombre,
-        subtotal: redondear(
-          item.cantidad * producto.precio,
-          2
-        ),
-      });
+  item,
+  nombre: producto.nombre,
+  unidad: producto.unidad,
+  subtotal: redondear(
+    item.cantidad * producto.precio,
+    2
+  ),
+});
     }
 
     const total = redondear(
@@ -116,7 +117,7 @@ export async function registrarVenta(
     ventaId = resultado.lastInsertRowId;
 
     for (const producto of productosVerificados) {
-      const { item, nombre, subtotal } = producto;
+      const { item, nombre,unidad ,subtotal } = producto;
 
       const descuento = await db.runAsync(
         `UPDATE productos
@@ -132,17 +133,27 @@ export async function registrarVenta(
       }
 
       await db.runAsync(
-        `INSERT INTO venta_items
-        (venta_id, producto_id, cantidad, precio_unitario, subtotal)
-        VALUES (?, ?, ?, ?, ?)`,
-        [
-          ventaId,
-          item.productoId,
-          item.cantidad,
-          item.precioUnitario,
-          subtotal,
-        ]
-      );
+  `INSERT INTO venta_items
+  (
+    venta_id,
+    producto_id,
+    cantidad,
+    precio_unitario,
+    subtotal,
+    nombre_producto,
+    unidad
+  )
+  VALUES (?, ?, ?, ?, ?, ?, ?)`,
+  [
+    ventaId,
+    item.productoId,
+    item.cantidad,
+    item.precioUnitario,
+    subtotal,
+    nombre,
+    unidad,
+  ]
+);
     }
   });
 
@@ -198,11 +209,11 @@ export async function obtenerDetalleVenta(
     `SELECT
        vi.id,
        vi.producto_id,
-       p.nombre,
+       COALESCE(vi.nombre_producto, p.nombre) AS nombre,
        vi.cantidad,
        vi.precio_unitario,
        vi.subtotal,
-       p.unidad
+       COALESCE(vi.unidad, p.unidad) AS unidad
      FROM venta_items vi
      LEFT JOIN productos p ON p.id = vi.producto_id
      WHERE vi.venta_id = ?
@@ -210,5 +221,4 @@ export async function obtenerDetalleVenta(
     [ventaId]
   );
 }
-
 

@@ -48,6 +48,47 @@ export async function initDb() {
       subtotal REAL NOT NULL
     );
   `);
+    // Migración: conservar los datos del producto al momento de la venta.
+  const columnas = await db.getAllAsync<{ name: string }>(
+    "PRAGMA table_info(venta_items)"
+  );
+
+  const tieneNombre = columnas.some(
+    (columna) => columna.name === "nombre_producto"
+  );
+
+  const tieneUnidad = columnas.some(
+    (columna) => columna.name === "unidad"
+  );
+
+  if (!tieneNombre) {
+    await db.execAsync(
+      "ALTER TABLE venta_items ADD COLUMN nombre_producto TEXT"
+    );
+  }
+
+  if (!tieneUnidad) {
+    await db.execAsync(
+      "ALTER TABLE venta_items ADD COLUMN unidad TEXT"
+    );
+  }
+
+  // Completa los datos de las ventas anteriores con el catálogo disponible.
+  await db.execAsync(`
+    UPDATE venta_items
+    SET nombre_producto = (
+      SELECT nombre FROM productos
+      WHERE productos.id = venta_items.producto_id
+    )
+    WHERE nombre_producto IS NULL;
+
+    UPDATE venta_items
+    SET unidad = (
+      SELECT unidad FROM productos
+      WHERE productos.id = venta_items.producto_id
+    )
+    WHERE unidad IS NULL;
+  `);
 }
 
 // SOLO PARA PRUEBAS: borra todo para volver a ver el flujo desde Welcome
