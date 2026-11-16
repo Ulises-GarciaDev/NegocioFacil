@@ -1,0 +1,1 @@
+export type TipoNegocio = "verduleria" | "carniceria" | "abarrotes";

@@ -1,20 +1,36 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { useEffect, useState } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import RootNavigator from "./src/navigation/RootNavigator";
+import { initDb,reiniciarBase} from "./src/database/db";
+import { obtenerNegocio } from "./src/database/negocio";
+import { VentaProvider } from "./src/context/VentaContext";
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+  const [listo, setListo] = useState(false);
+  const [rutaInicial, setRutaInicial] = useState<"Welcome" | "Main">("Welcome");
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+  useEffect(() => {
+    async function iniciar() {
+      try {
+        //await reiniciarBase();
+        await initDb();
+        const negocio = await obtenerNegocio();
+        if (negocio) setRutaInicial("Main");
+      } catch (e) {
+        console.error("Error al iniciar la base de datos", e);
+      }
+      setListo(true);
+    }
+    iniciar();
+  }, []);
+
+  if (!listo) return null;
+
+ return (
+  <VentaProvider>
+    <NavigationContainer>
+      <RootNavigator rutaInicial={rutaInicial} />
+    </NavigationContainer>
+  </VentaProvider>
+);
+}
