@@ -160,12 +160,35 @@ const maxMonto = Math.max(
           <Ionicons name="add" size={22} color="#fff" />
           <Text style={styles.botonTexto}>Nueva venta</Text>
         </Pressable>
+        <Pressable
+  style={styles.botonHistorial}
+  onPress={() => navigation.navigate("HistorialVentas")}
+>
+  <Ionicons name="time-outline" size={20} color="#176B54" />
+  <Text style={styles.botonHistorialTexto}>
+    Ver historial de ventas
+  </Text>
+</Pressable>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  botonHistorial: {
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: 8,
+  backgroundColor: "#EAF4EF",
+  paddingVertical: 15,
+  borderRadius: 12,
+},
+botonHistorialTexto: {
+  color: "#176B54",
+  fontSize: 15,
+  fontWeight: "700",
+},
   main: {
     flex: 1,
     backgroundColor: "#F5F7F6",

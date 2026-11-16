@@ -6,6 +6,7 @@ import {
   Pressable,
   FlatList,
   StyleSheet,
+  Alert
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -31,15 +32,38 @@ export default function CatalogScreen() {
   const [filtro, setFiltro] = useState<Filtro>("todos");
 
   // Se ejecuta cada vez que la pantalla toma foco (no solo la primera vez)
-  useFocusEffect(
-    useCallback(() => {
-      async function cargar() {
+useFocusEffect(
+  useCallback(() => {
+    let activo = true;
+
+    async function cargar() {
+      try {
         const lista = await obtenerProductos();
-        setProductos(lista);
+
+        if (activo) {
+          setProductos(lista);
+        }
+      } catch (e) {
+        console.error("No se pudieron cargar los productos", e);
+
+        if (activo) {
+          const mensaje =
+            e instanceof Error
+              ? e.message
+              : "Ocurrió un error inesperado.";
+
+          Alert.alert("No se pudo cargar el catálogo", mensaje);
+        }
       }
-      cargar();
-    }, [])
-  );
+    }
+
+    cargar();
+
+    return () => {
+      activo = false;
+    };
+  }, [])
+);
 
   const bajos = productos.filter(esBajo).length;
 

@@ -149,3 +149,66 @@ export async function registrarVenta(
   return ventaId;
 }
 
+
+
+export type VentaHistorial = {
+  id: number;
+  fecha: string;
+  total: number;
+  cantidadProductos: number;
+};
+
+export type DetalleVenta = {
+  id: number;
+  producto_id: number;
+  nombre: string;
+  cantidad: number;
+  precio_unitario: number;
+  subtotal: number;
+  unidad: "kg" | "pieza";
+};
+
+// Obtiene todas las ventas, de la más reciente a la más antigua.
+export async function obtenerHistorialVentas(): Promise<VentaHistorial[]> {
+  const db = await getDb();
+
+  return await db.getAllAsync<VentaHistorial>(
+    `SELECT
+       v.id,
+       v.fecha,
+       v.total,
+    COUNT(vi.id) AS cantidadProductos     FROM ventas v
+     LEFT JOIN venta_items vi ON vi.venta_id = v.id
+     GROUP BY v.id
+     ORDER BY v.id DESC`
+  );
+}
+
+// Obtiene los productos que pertenecen a una venta.
+export async function obtenerDetalleVenta(
+  ventaId: number
+): Promise<DetalleVenta[]> {
+  if (!Number.isInteger(ventaId) || ventaId <= 0) {
+    throw new Error("Identificador de venta inválido");
+  }
+
+  const db = await getDb();
+
+  return await db.getAllAsync<DetalleVenta>(
+    `SELECT
+       vi.id,
+       vi.producto_id,
+       p.nombre,
+       vi.cantidad,
+       vi.precio_unitario,
+       vi.subtotal,
+       p.unidad
+     FROM venta_items vi
+     LEFT JOIN productos p ON p.id = vi.producto_id
+     WHERE vi.venta_id = ?
+     ORDER BY vi.id ASC`,
+    [ventaId]
+  );
+}
+
+

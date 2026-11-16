@@ -9,6 +9,7 @@ import NewSaleScreen from "../screens/NewSaleScreen";
 import ConfirmSaleScreen from "../screens/ConfirmSaleScreen";
 import SaleDoneScreen from "../screens/SaleDoneScreen";
 import SaleSummaryScreen from "../screens/SaleSummaryScreen";
+import SalesHistoryScreen from "../screens/SalesHistoryScreen";
 
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -32,7 +33,10 @@ export default function RootNavigator({
   <Stack.Screen name="ConfirmarVenta" component={ConfirmSaleScreen} />
 <Stack.Screen name="VentaRegistrada" component={SaleDoneScreen} />
    <Stack.Screen name="ResumenVenta" component={SaleSummaryScreen} />
-
+    <Stack.Screen
+  name="HistorialVentas"
+  component={SalesHistoryScreen}
+/>
 
 </Stack.Navigator>
   );

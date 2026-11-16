@@ -13,4 +13,5 @@ export type RootStackParamList = {
   ConfirmarVenta: undefined;
   VentaRegistrada: { total: number };
   ResumenVenta: undefined;
+  HistorialVentas: undefined;
 };
