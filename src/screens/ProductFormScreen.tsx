@@ -118,8 +118,15 @@ export default function ProductFormScreen({
       }
       navigation.goBack();
     } catch (e) {
-      console.error("No se pudo guardar el producto", e);
-    }
+  console.error("No se pudo guardar el producto", e);
+
+  const mensaje =
+    e instanceof Error
+      ? e.message
+      : "Ocurrió un error inesperado al guardar el producto.";
+
+  Alert.alert("No se pudo guardar", mensaje);
+}
   };
 
   const confirmarEliminar = () => {
