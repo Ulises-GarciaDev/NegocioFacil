@@ -37,7 +37,7 @@ export default function WelcomeScreen() {
     styles.button,
     pressed && styles.buttonPressed,
   ]}
-  onPress={() => navigation.navigate('BusinessSelectionScreen')}
+  onPress={() => navigation.navigate('BusinessSelection')}
 >
   <Text style={styles.buttonText}>Comenzar</Text>
 </Pressable>
