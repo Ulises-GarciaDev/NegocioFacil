@@ -59,9 +59,9 @@ export const configNegocios: Record<TipoNegocio, ConfigNegocio> = {
       { nombre: "Aceite 1 L", categoria: "Despensa", precio: 45, existencias: 20 },
       { nombre: "Arroz 1 kg", categoria: "Despensa", precio: 32, existencias: 25 },
       { nombre: "Frijol 1 kg", categoria: "Despensa", precio: 38, existencias: 22 },
-      { nombre: "Pan de caja", categoria: "Panadería", precio: 42, existencias: 4 },
-      { nombre: "Huevo 12 pzas", categoria: "Lácteos", precio: 65, existencias: 3 },
-      { nombre: "Atún en lata", categoria: "Enlatados", precio: 22, existencias: 2 },
+      { nombre: "Pan de caja", categoria: "Panadería", precio: 42, existencias: 23 },
+      { nombre: "Huevo 12 pzas", categoria: "Lácteos", precio: 65, existencias: 23 },
+      { nombre: "Atún en lata", categoria: "Enlatados", precio: 22, existencias: 20 },
     ],
   },
 };
