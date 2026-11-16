@@ -49,7 +49,36 @@ export async function actualizarProducto(id: number, p: NuevoProducto) {
   );
 }
 
+
 export async function eliminarProducto(id: number) {
   const db = await getDb();
-  await db.runAsync("DELETE FROM productos WHERE id = ?", [id]);
+
+  if (!Number.isInteger(id) || id <= 0) {
+    throw new Error("Identificador de producto inválido");
+  }
+
+  const producto = await db.getFirstAsync<{ id: number }>(
+    "SELECT id FROM productos WHERE id = ?",
+    [id]
+  );
+
+  if (!producto) {
+    throw new Error("El producto no existe");
+  }
+
+  const ventasRelacionadas = await db.getFirstAsync<{ total: number }>(
+    "SELECT COUNT(*) AS total FROM venta_items WHERE producto_id = ?",
+    [id]
+  );
+
+  if (ventasRelacionadas && ventasRelacionadas.total > 0) {
+    throw new Error(
+      "No puedes eliminar este producto porque tiene ventas registradas"
+    );
+  }
+
+  await db.runAsync(
+    "DELETE FROM productos WHERE id = ?",
+    [id]
+  );
 }

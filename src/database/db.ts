@@ -4,7 +4,7 @@ let dbPromise: Promise<SQLite.SQLiteDatabase> | null = null;
 
 export function getDb() {
   if (!dbPromise) {
-  dbPromise = SQLite.openDatabaseAsync("gestion-negocios-abarrotes.db");  }
+  dbPromise = SQLite.openDatabaseAsync("gestion-negocios.db");  }
   return dbPromise;
 }
 
